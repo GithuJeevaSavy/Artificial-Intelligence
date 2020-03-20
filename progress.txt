@@ -1,0 +1,3 @@
+First group Meeting -March 4
+  Discussed different problems in artificial Intelligence.
+  Discussed the possibility of doing Knight-Tours problem
