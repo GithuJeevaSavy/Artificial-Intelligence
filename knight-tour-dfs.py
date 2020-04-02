@@ -18,16 +18,16 @@ class KnightTour:
         self.moves = [(2, 1), (1, 2), (-1, 2), (-2, 1),
                       (-2, -1), (-1, -2), (1, -2), (2, -1)]
 
-        for j in range(n-1, 0, -1):
-            for i in range(0, m-1):
+        for j in range(n-1, -1, -1):
+            for i in range(0, m):
                 temppo = (i, j)
                 tempnum = 0
                 self.po_map[temppo] = tempnum
 
     def printboard(self):
-        for j in range(self.n_y - 1, 0, -1):
+        for j in range(self.n_y - 1, -1, -1):
             row = ""
-            for i in range(0, self.m_x - 1):
+            for i in range(0, self.m_x):
                 temppo = (i, j)
                 row = row + str(self.po_map[temppo]) + ", "
             print(row)
@@ -39,10 +39,10 @@ class KnightTour:
             return True
 
     def validstep(self, po):
-        if po in self.po_map:
-            return True
-        else:
+        if self.po_map[po] == 0:
             return False
+        else:
+            return True
 
     def adjnum(self, po):
         num = 0
@@ -82,12 +82,12 @@ class KnightTour:
         self.steps = self.steps+1
         self.po_map[self.position] = self.steps
         self.po_stack.append(self.position)
-
+        #flag = False
         if self.steps < self.m_x*self.n_y:
             flag = False
             adj_list = self.SortAdj()
 
-            if len(adj_list) > 0:
+            if len(adj_list) != 0:
                 for i in adj_list:
                     if(flag == False):
                         self.position = i
@@ -95,7 +95,7 @@ class KnightTour:
                     else:
                         break
 
-            if not flag:
+            if flag == False:
                 self.steps = self.steps - 1
                 if (self.steps == 0):
                     return flag
@@ -108,19 +108,18 @@ class KnightTour:
         return flag
 
 
-while(True):
-    col = int(input("columns on board: "))
-    row = int(input("rows on board: "))
-    col_s = int(input("starting column (1 - " + str(col) + "): "))
-    col_s = col_s - 1
-    row_s = int(input("starting row (1 - " + str(row) + "): "))
-    row_s = row_s - 1
+col = int(input("columns on board: "))
+row = int(input("rows on board: "))
+col_s = int(input("starting column (1 - " + str(col) + "): "))
+col_s = col_s - 1
+row_s = int(input("starting row (1 - " + str(row) + "): "))
+row_s = row_s - 1
 
-    knightTour = KnightTour(col, row, (col_s, row_s))
+knightTour = KnightTour(col, row, (col_s, row_s))
 
-    possible = knightTour.DFSTour()
-    if possible:
-        print("Knight's Tour is possible.")
-        knightTour.printboard()
-    else:
-        print("Knight's Tour is not possible.")
+possible = knightTour.DFSTour()
+if possible:
+    print("Knight's Tour is possible.")
+    knightTour.printboard()
+else:
+    print("Knight's Tour is not possible.")
