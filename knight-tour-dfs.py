@@ -23,7 +23,7 @@ class KnightTour:
                 temppo = (i, j)
                 tempnum = 0
                 self.po_map[temppo] = tempnum
-
+        
     def printboard(self):
         for j in range(self.n_y - 1, -1, -1):
             row = ""
@@ -40,9 +40,9 @@ class KnightTour:
 
     def validstep(self, po):
         if self.po_map[po] == 0:
-            return False
-        else:
             return True
+        else:
+            return False
 
     def adjnum(self, po):
         num = 0
