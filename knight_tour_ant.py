@@ -28,12 +28,12 @@ class Problem:
         r += self.drc[k][0]
         c += drc[k][1]
         if (r >= 0 and r < self.boardSize and c >= 0 and c < self.boardSize):
-            return r, c
+            return (r, c)
 
 
 # struct represents a pheromone amount associated with a move
 
-class MyStruct(NamedTuple):
+class rckt(NamedTuple):
     r: int
     c: int
     k: int
@@ -44,35 +44,34 @@ class MyStruct(NamedTuple):
 def main(self):
     print("Starting square:  row", self.rStart, "column", self.cStart)
     # initialize board
-    for r in range(0, self.boardSize-1):
-        for c in range(0, self.boardSize-1):
-            for k := 0; k < 8; k++ {
-                if _, _, ok := dest(r, c, k); ok {
+    for r in range(0, self.boardSize):
+        for c in range(0, self.boardSize):
+            for k in range(0, 8):
+                if self.dest(r, c, k):
                     tNet[(r*boardSize+c)*8+k] = 1e-6
-                }
-            }
+
+
+
+    # waitGroups for ant release clockwork
+
+    self.start.Add(1)
+    # channel for ants to return tours with pheremone updates
+    self.tch =  rckt(NamedTuple)
+
+
+    # create an ant for each square
+    for r in range(0, self.boardSize):
+        for c in range(0, self.boardSize):
+            ant(r, c, self.start, &reset, tch)
         }
     }
 
-    // waitGroups for ant release clockwork
-    var start, reset sync.WaitGroup
-    start.Add(1)
-    // channel for ants to return tours with pheremone updates
-    tch := make(chan []rckt)
-
-    // create an ant for each square
-    for r := 0; r < boardSize; r++ {
-        for c := 0; c < boardSize; c++ {
-            go ant(r, c, &start, &reset, tch)
-        }
-    }
-
-    // accumulator for new pheromone amounts
+    # accumulator for new pheromone amounts
     tNew := make([]float64, nSquares*8)
 
-    // each iteration is a "cycle" as described in the paper
+    # each iteration is a "cycle" as described in the paper
     for {
-        // evaporate pheromones
+        # evaporate pheromones
         for i := range tNet {
             tNet[i] *= .75
         }
