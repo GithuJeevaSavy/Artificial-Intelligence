@@ -1,6 +1,43 @@
 import threading
 import time
 from typing import NamedTuple
+import math
+import random
+
+import threading
+
+class WaitGroup(object):
+    """WaitGroup is like Go sync.WaitGroup.
+
+    Without all the useful corner cases.
+    """
+    def __init__(self):
+        self.count = 0
+        self.cv = threading.Condition()
+
+    def add(self, n):
+        self.cv.acquire()
+        self.count += n
+        self.cv.release()
+
+    def done(self):
+        cv.acquire()
+        count -= 1
+        if self.count == 0:
+            self.cv.notify_all()
+        self.cv.release()
+
+    def wait(self):
+        self.cv.acquire()
+        while self.count > 0:
+            self.cv.wait()
+        self.cv.release()
+
+class rckt(NamedTuple):
+    r: int
+    c: int
+    k: int
+    t: float
 
 class Problem:
 
@@ -17,7 +54,7 @@ class Problem:
         self.cStart = 3
 
         # pheromone representation read by ants
-
+        self.tNet = [self.nSquares*8]
 
         # row, col deltas of legal moves
         self.drc = [[-2, 1], [-2, -1], [-1, 2], [1, 2],
@@ -33,11 +70,6 @@ class Problem:
 
 # struct represents a pheromone amount associated with a move
 
-class rckt(NamedTuple):
-    r: int
-    c: int
-    k: int
-    t: float
 
 
 
@@ -48,145 +80,139 @@ def main(self):
         for c in range(0, self.boardSize):
             for k in range(0, 8):
                 if self.dest(r, c, k):
-                    tNet[(r*boardSize+c)*8+k] = 1e-6
+                    tNet[(r*boardSize+c)*8+k] = math.e-6
 
 
 
     # waitGroups for ant release clockwork
-
+    start, reset = WaitGroup
     self.start.Add(1)
     # channel for ants to return tours with pheremone updates
-    self.tch =  rckt(NamedTuple)
+    tch= [rckt(NamedTuple)]
 
 
     # create an ant for each square
     for r in range(0, self.boardSize):
         for c in range(0, self.boardSize):
-            ant(r, c, self.start, &reset, tch)
-        }
-    }
+            ant(r, c, self.start, self.reset.wait(), self.tch)
+
+
 
     # accumulator for new pheromone amounts
-    tNew := make([]float64, nSquares*8)
+    tNew = [self.nSquares*8]
 
     # each iteration is a "cycle" as described in the paper
-    for {
+    while True:
         # evaporate pheromones
-        for i := range tNet {
-            tNet[i] *= .75
-        }
+        for i in range(0, self.tNet):
+            self.tNet[i] *= .75
 
-        reset.Add(nSquares) // number of ants to release
-        start.Done()        // release them
-        reset.Wait()        // wait for them to begin searching
-        start.Add(1)        // reset start signal for next cycle
 
-        // gather tours from ants
-        for i := 0; i < nSquares; i++ {
-            tour := <-tch
-            // watch for a complete tour from the specified starting square
-            if len(tour) == completeTour &&
-                tour[0].r == rStart-1 && tour[0].c == cStart-1 {
+        reset.Add(self.nSquares) #number of ants to release
+        start.Done()        #release them
+        reset.Wait()        #wait for them to begin searching
+        start.Add(1)        #reset start signal for next cycle
 
-                // task output:  move sequence in a grid.
-                seq := make([]int, nSquares)
-                for i, sq := range tour {
+        # gather tours from ants
+        for r in range(0, self.nSquares):
+            tour = self.tch
+            # watch for a complete tour from the specified starting square
+            if len(tour) == self.completeTour and tour[0].r == self.rStart-1 and tour[0].c == self.cStart-1:
+
+                # task output:  move sequence in a grid.
+                seq = [self.nSquares]
+                for i, sq in  tour:
                     seq[sq.r*boardSize+sq.c] = i + 1
-                }
-                last := tour[len(tour)-1]
-                r, c, _ := dest(last.r, last.c, last.k)
-                seq[r*boardSize+c] = nSquares
-                fmt.Println("Move sequence:")
-                for r := 0; r < boardSize; r++ {
-                    for c := 0; c < boardSize; c++ {
-                        fmt.Printf(" %3d", seq[r*boardSize+c])
-                    }
-                    fmt.Println()
-                }
-                return // task only requires finding a single tour
-            }
-            // accumulate pheromone amounts from all ants
-            for _, move := range tour {
-                tNew[(move.r*boardSize+move.c)*8+move.k] += move.t
-            }
-        }
 
-        // update pheromone amounts on network, reset accumulator
-        for i, tn := range tNew {
-            tNet[i] += tn
-            tNew[i] = 0
-        }
-    }
-}
+                last = tour[len(tour)-1]
+                r, c, temp= self.dest(last.r, last.c, last.k)
+                seq[r*self.boardSize+c] = self.nSquares
+                print("Move sequence:")
+                for r in range(0, self.boardSize):
+                    for c in range(0, self.boardSize):
+                        print(seq[r * self.boardSize + c])
 
-type square struct {
-    r, c int
-}
+                    print("\n")
 
-func ant(r, c int, start, reset *sync.WaitGroup, tourCh chan []rckt) {
-    rnd := rand.New(rand.NewSource(time.Now().UnixNano()))
-    tabu := make([]square, nSquares)
-    moves := make([]rckt, nSquares)
-    unexp := make([]rckt, 8)
-    tabu[0].r = r
-    tabu[0].c = c
+                return # task only requires finding a single tour
 
-    for {
-        // cycle initialization
-        moves = moves[:0]
-        tabu = tabu[:1]
-        r := tabu[0].r
-        c := tabu[0].c
+            # accumulate pheromone amounts from all ants
+            for move in tour:
+                tNew[(move.r*self.boardSize+move.c)*8+move.k] += move.t
 
-        // wait for start signal
-        start.Wait()
-        reset.Done()
 
-        for {
-            // choose next move
-            unexp = unexp[:0]
-            var tSum float64
-        findU:
-            for k := 0; k < 8; k++ {
-                dr, dc, ok := dest(r, c, k)
-                if !ok {
+
+        # update pheromone amounts on network, reset accumulator
+        for i, tn in self.tNew:
+            self.tNet[i] += tn
+            self.tNew[i] = 0
+
+
+
+
+class square(NamedTuple):
+    r: int
+    c: int
+
+
+def ant(self, r, c , start, reset , tourCh):
+
+    self.tabu = [square]
+    self.moves = [rckt]
+    self.unexp = [rckt]
+    self.tabu[0].r = r
+    self.tabu[0].c = c
+
+    while True:
+        # cycle initialization
+
+
+        r = self.tabu[0].r
+        c = self.tabu[0].c
+
+        # wait for start signal
+        start.wait()
+        reset.done()
+
+        while True:
+            # choose next move
+            for k in range(0, 8):
+                dr, dc, ok = self.dest(r, c, k)
+                if not ok:
                     continue
-                }
-                for _, t := range tabu {
-                    if t.r == dr && t.c == dc {
-                        continue findU
-                    }
-                }
-                tk := tNet[(r*boardSize+c)*8+k]
-                tSum += tk
-                // note:  dest r, c stored here
-                unexp = append(unexp, rckt{dr, dc, k, tk})
-            }
-            if len(unexp) == 0 {
-                break // no moves
-            }
-            rn := rnd.Float64() * tSum
-            var move rckt
-            for _, move = range unexp {
-                if rn <= move.t {
-                    break
-                }
-                rn -= move.t
-            }
 
-            // move to new square
+                for t in self.tabu:
+                    if t.r == dr and t.c == dc:
+                        break
+
+
+                tk = self.tNet[(r*self.boardSize+c)*8+k]
+                self.tSum += tk
+                # note:  dest r, c stored here
+                self.unexp.append(rckt[dr, dc, k, tk])
+
+            if len(self.unexp) == 0:
+                break # no moves
+
+            rn = random.random() * self.tSum
+
+            for move in self.unexp:
+                if rn <= move.t:
+                    break
+                rn -= move.t
+
+            # move to new square
             move.r, r = r, move.r
             move.c, c = c, move.c
-            tabu = append(tabu, square{r, c})
-            moves = append(moves, move)
-        }
+            self.tabu.append(square[r, c])
+            self.moves.append( move)
 
-        // compute pheromone amount to leave
-        for i := range moves {
-            moves[i].t = float64(len(moves)-i) / float64(completeTour-i)
-        }
 
-        // return tour found for this cycle
-        tourCh <- moves
-    }
-}
+        # compute pheromone amount to leave
+        for i in self.moves:
+            moves[i].t = (len(self.moves)-i) / (self.completeTour-i)
+
+        # return tour found for this cycle
+        tourCh <- self.moves
+
+
