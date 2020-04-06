@@ -7,10 +7,7 @@ import random
 import threading
 
 class WaitGroup(object):
-    """WaitGroup is like Go sync.WaitGroup.
 
-    Without all the useful corner cases.
-    """
     def __init__(self):
         self.count = 0
         self.cv = threading.Condition()
@@ -21,8 +18,8 @@ class WaitGroup(object):
         self.cv.release()
 
     def done(self):
-        cv.acquire()
-        count -= 1
+        self.cv.acquire()
+        self.count -= 1
         if self.count == 0:
             self.cv.notify_all()
         self.cv.release()
@@ -40,7 +37,13 @@ class rckt(NamedTuple):
     t: float
 
 class Problem:
-
+    boardSize=0
+    nSquares = 0
+    completeTour = 0
+    rstart = 2
+    cstart = 3
+    tNet = []
+    drc = [[]]
     def __init__(self):
 
 
@@ -69,86 +72,6 @@ class Problem:
 
 
 # struct represents a pheromone amount associated with a move
-
-
-
-
-def main(self):
-    print("Starting square:  row", self.rStart, "column", self.cStart)
-    # initialize board
-    for r in range(0, self.boardSize):
-        for c in range(0, self.boardSize):
-            for k in range(0, 8):
-                if self.dest(r, c, k):
-                    tNet[(r*boardSize+c)*8+k] = math.e-6
-
-
-
-    # waitGroups for ant release clockwork
-    start, reset = WaitGroup
-    self.start.Add(1)
-    # channel for ants to return tours with pheremone updates
-    tch= [rckt(NamedTuple)]
-
-
-    # create an ant for each square
-    for r in range(0, self.boardSize):
-        for c in range(0, self.boardSize):
-            ant(r, c, self.start, self.reset.wait(), self.tch)
-
-
-
-    # accumulator for new pheromone amounts
-    tNew = [self.nSquares*8]
-
-    # each iteration is a "cycle" as described in the paper
-    while True:
-        # evaporate pheromones
-        for i in range(0, self.tNet):
-            self.tNet[i] *= .75
-
-
-        reset.Add(self.nSquares) #number of ants to release
-        start.Done()        #release them
-        reset.Wait()        #wait for them to begin searching
-        start.Add(1)        #reset start signal for next cycle
-
-        # gather tours from ants
-        for r in range(0, self.nSquares):
-            tour = self.tch
-            # watch for a complete tour from the specified starting square
-            if len(tour) == self.completeTour and tour[0].r == self.rStart-1 and tour[0].c == self.cStart-1:
-
-                # task output:  move sequence in a grid.
-                seq = [self.nSquares]
-                for i, sq in  tour:
-                    seq[sq.r*boardSize+sq.c] = i + 1
-
-                last = tour[len(tour)-1]
-                r, c, temp= self.dest(last.r, last.c, last.k)
-                seq[r*self.boardSize+c] = self.nSquares
-                print("Move sequence:")
-                for r in range(0, self.boardSize):
-                    for c in range(0, self.boardSize):
-                        print(seq[r * self.boardSize + c])
-
-                    print("\n")
-
-                return # task only requires finding a single tour
-
-            # accumulate pheromone amounts from all ants
-            for move in tour:
-                tNew[(move.r*self.boardSize+move.c)*8+move.k] += move.t
-
-
-
-        # update pheromone amounts on network, reset accumulator
-        for i, tn in self.tNew:
-            self.tNet[i] += tn
-            self.tNew[i] = 0
-
-
-
 
 class square(NamedTuple):
     r: int
@@ -215,4 +138,92 @@ def ant(self, r, c , start, reset , tourCh):
         # return tour found for this cycle
         tourCh <- self.moves
 
+
+def main():
+    pObj = Problem
+    wObj = WaitGroup()
+
+    print("Starting square:  row", pObj.rstart, "column", pObj.cstart)
+    # initialize board
+    for r in range(0, pObj.boardSize):
+        for c in range(0, pObj.boardSize):
+            for k in range(0, 8):
+                if pObj.dest(r, c, k):
+                    tNet[(r*pObj.boardSize+c)*8+k] = math.e-6
+
+
+
+    # waitGroups for ant release clockwork
+    start = WaitGroup
+    start.__init__(WaitGroup)
+    reset = WaitGroup
+    reset.__init__(WaitGroup)
+    start.add(start, n=1)
+    r=0
+    c=0
+    k=0
+    t=0
+    # channel for ants to return tours with pheremone updates
+    tch= [rckt(r,c,k,t)]
+
+
+    # create an ant for each square
+    for r in range(0, pObj.boardSize):
+        for c in range(0, pObj.boardSize):
+            ant(r, c, start, reset.wait(), tch)
+
+
+
+    # accumulator for new pheromone amounts
+    tNew = [pObj.nSquares*8]
+
+    # each iteration is a "cycle" as described in the paper
+    while True:
+        # evaporate pheromones
+        for i in range(0,len(pObj.tNet)):
+            pObj.tNet[i] *= .75
+
+
+        reset.add(reset,n=pObj.nSquares) #number of ants to release
+        start.done(start)        #release them
+        reset.wait(reset)        #wait for them to begin searching
+        start.add(start, n=1)        #reset start signal for next cycle
+
+        # gather tours from ants
+        for r in range(0, pObj.nSquares):
+            tour = pObj.tch
+            # watch for a pObj tour from the specified starting square
+            if len(tour) == pObj.completeTour and tour[0].r == pObj.rStart-1 and tour[0].c == pObj.cStart-1:
+
+                # task output:  move sequence in a grid.
+                seq = [pObj.nSquares]
+                for i in  range(tour):
+                    seq[tour[i].r*pObj.boardSize+tour[i].c] = i + 1
+
+                last = tour[len(tour)-1]
+                r, c, temp= pObj.dest(last.r, last.c, last.k)
+                seq[r*pObj.boardSize+c] = pObj.nSquares
+                print("Move sequence:")
+                for r in range(0, pObj.boardSize):
+                    for c in range(0, pObj.boardSize):
+                        print(seq[r * pObj.boardSize + c])
+
+                    print("\n")
+
+                return # task only requires finding a single tour
+
+            # accumulate pheromone amounts from all ants
+            for i in range(tour):
+                tNew[(tour[i].r*pObj.boardSize+tour[i].c)*8+tour[i].k] += tour[i].t
+
+
+
+        # update pheromone amounts on network, reset accumulator
+        for i in range(0,len(tNew)):
+            pObj.tNet[i] += tNew[i]
+            tNew[i] = 0
+
+
+if __name__ == "__main__":
+    main()
 
