@@ -10,9 +10,8 @@ import (
 const size = 8
 const squares = size * size
 const hamiltonianPath = squares - 1
-const colStart = 1
-const rowStart = 1
-
+const rowStart = 5
+const colStart = 3
 
 var pheroSquares = make([]float64, squares*8)
 
@@ -31,6 +30,9 @@ type rckPheromone struct {
 }
 
 func main() {
+    startT := time.Now()
+    startTime := time.Now().UnixNano()
+    fmt.Println(startTime)
     fmt.Println("Starting row: ", rowStart, "| Starting column: ", colStart)
 
     for r := 0; r < size; r++ {
@@ -84,6 +86,12 @@ func main() {
                     }
                     fmt.Println()
                 }
+                fmt.Println(time.Now().UnixNano())
+                var duration = time.Now().UnixNano() - startTime
+                elapsed := time.Since(startT)
+
+                fmt.Println(duration)
+                fmt.Println("ACO took %s", elapsed)
                 return
             }
             for _, move := range tour {
