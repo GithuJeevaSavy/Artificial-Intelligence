@@ -1,0 +1,36 @@
+Meeting 1
+
+Discussed the different problems in artificial intelligence
+
+Meeting 2
+
+Finalized with the Knight's tour problem
+
+Meeting 3
+
+Discussed about the different algorithms we are going to choose
+
+Meeting 4 (Online) 
+
+Divided the task for the assignemnts
+	Aashima -backtracking
+	George - Ant colony
+	Githu - report
+	Soumen -depth first search
+	Piyush -Warnsdroff and neural networks
+
+Meeting 5 (Online) 
+
+Discussed the progress of the assignment. 
+
+Meeting 6 (Online)
+
+Discussed about the report and analysis of algorithms
+
+Final meeting (Online) 
+
+Discussed about the final deliverables.
+
+
+All other discussions are done simultaneously via Whatsapp Group
+	
