@@ -23,6 +23,6 @@ Piyush Mankad
 
 Soumen Ghosh
 	Implementation of Depth First Search approach for the Knight’s Tour problem
-	Analysis of other relevant algorithms simultaneously
-	Reading  papers related to the problems and analyzing the different approaches 
+	Analysis of several other relevant algorithms simultaneously that guided us towards the right direction in finding a suitable solution
+	Read papers related to the problems and analyzed the different approaches 
 
