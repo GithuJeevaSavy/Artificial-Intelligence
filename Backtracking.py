@@ -1,9 +1,10 @@
 # Python3 program to solve Knight Tour problem using Backtracking
 import datetime
+import time 
 
 # Chessboard Size
-totalRows = 6
-totalCols = 6
+totalRows = 8
+totalCols = 8
 startRow = 2
 startCol = 2
 possibleMoves = [[2, 1], [1, 2], [-1, 2],
@@ -72,6 +73,7 @@ def findTour(row, col, move, visitedBlocks):
 
 # Driver program to test above function
 if __name__ == "__main__":
+    t1 = time.time()
     # Initialize visitedBlocks array to track moves.
     visitedBlocks = [[0 for x in range(totalRows)] for y in range(totalCols)]
     print("Initiating program execution...")
@@ -79,3 +81,5 @@ if __name__ == "__main__":
     # Function call to find tour with starting point as [startRow, startCol]
     if not findTour(startRow, startCol, 1, visitedBlocks):
         print("Solution doesn't exists.")
+
+    print("execution time is",time.time()-t1)

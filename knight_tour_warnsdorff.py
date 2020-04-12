@@ -3,6 +3,7 @@ import cv2
 from heapq import heappush, heappop
 import random
 import numpy as np
+import time
 
 def visualize():
 	pass
@@ -23,7 +24,7 @@ def getPossibleMoves(newX,newY,chessboard):
 			degreeCount+=1
 	return degreeCount
 	
-
+t1 = time.time()
 
 aparser = argparse.ArgumentParser(description="Warnsdorff Rule")
 aparser.add_argument('--rows', type=int, default=8, 
@@ -67,23 +68,24 @@ for step in range(chessX*chessY):
 
 		if isValid(newX,newY,chessboard):
 			degreeCount = getPossibleMoves(newX,newY,chessboard)
-			print("degrees {} and move {},{}".format(degreeCount, newX, newY))
+			# print("degrees {} and move {},{}".format(degreeCount, newX, newY))
 			heappush(priorityQueue,(degreeCount,i))
 
 	# pop the smallest element from the priority queue
 
 	if len(priorityQueue) > 0:
-		print("queue",step+1,priorityQueue)
+		# print("queue",step+1,priorityQueue)
 		(degree,moveNumber) = heappop(priorityQueue)
 		initX = initX + moveX[moveNumber]
 		initY = initY + moveY[moveNumber]
-		print("move number",moveX[moveNumber],moveY[moveNumber])
-		print("next move here",initX,initY)
-		print(chessboard)
+		# print("move number",moveX[moveNumber],moveY[moveNumber])
+		# print("next move here",initX,initY)
+		# print(chessboard)
 	else:
-		print("queue was empty")
+		# print("queue was empty")
 		break
 
 
 print(priorityQueue)
 print(chessboard)
+print("execution time is",time.time()-t1)

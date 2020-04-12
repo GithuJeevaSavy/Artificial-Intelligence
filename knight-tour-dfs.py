@@ -1,3 +1,6 @@
+import time
+import random
+
 
 class KnightTour:
 
@@ -23,7 +26,7 @@ class KnightTour:
                 temppo = (i, j)
                 tempnum = 0
                 self.po_map[temppo] = tempnum
-        
+
     def printboard(self):
         for j in range(self.n_y - 1, -1, -1):
             row = ""
@@ -108,6 +111,7 @@ class KnightTour:
         return flag
 
 
+# for a single run
 col = int(input("columns on board: "))
 row = int(input("rows on board: "))
 col_s = int(input("starting column (1 - " + str(col) + "): "))
@@ -116,10 +120,46 @@ row_s = int(input("starting row (1 - " + str(row) + "): "))
 row_s = row_s - 1
 
 knightTour = KnightTour(col, row, (col_s, row_s))
-
+startTime = time.time()
 possible = knightTour.DFSTour()
+endTime = time.time()
 if possible:
     print("Knight's Tour is possible.")
     knightTour.printboard()
 else:
     print("Knight's Tour is not possible.")
+
+timeElapsed = endTime-startTime
+print("Time elapsed: "+str(timeElapsed)+" seconds")
+
+# # for 10 runs
+# i = 1
+# times = []
+# while(i <= 10):
+#     col = 8
+#     row = 8
+#     col_s = random.randint(1, 8)
+#     row_s = random.randint(1, 8)
+#     print("random start position: "+str((row_s, col_s)))
+
+#     col_s -= 1
+#     row_s -= 1
+
+#     knightTour = KnightTour(col, row, (col_s, row_s))
+
+#     startTime = time.time()
+#     possible = knightTour.DFSTour()
+#     endTime = time.time()
+#     if possible:
+#         print("Knight's Tour is possible.")
+#         knightTour.printboard()
+#     else:
+#         print("Knight's Tour is not possible.")
+
+#     timeElapsed = endTime-startTime
+#     print("Time elapsed: "+str(timeElapsed)+" seconds")
+#     print("")
+#     times.append(timeElapsed)
+#     i += 1
+
+# print("Average : "+str(sum(times) / len(times)))
