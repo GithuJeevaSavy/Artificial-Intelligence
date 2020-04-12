@@ -37,9 +37,9 @@ class rckt(NamedTuple):
     t: float
 
 class Problem:
-    boardSize=0
-    nSquares = 0
-    completeTour = 0
+    boardSize=8
+    nSquares = boardSize * boardSize
+    completeTour = nSquares - 1
     rstart = 2
     cstart = 3
     tNet = []
@@ -48,8 +48,8 @@ class Problem:
 
 
         self.boardSize = 8
-        self.nSquares = boardSize * boardSize
-        self.completeTour = nSquares - 1
+        self.nSquares = self.boardSize * self.boardSize
+        self.completeTour = self.nSquares - 1
 
         # task input: starting square.  These are 1 based, but otherwise 0 based
         # row and column numbers are used througout the program.
@@ -66,9 +66,71 @@ class Problem:
 # get square reached by following edge k from square (r, c)
     def dest(self,r, c, k ):
         r += self.drc[k][0]
-        c += drc[k][1]
-        if (r >= 0 and r < self.boardSize and c >= 0 and c < self.boardSize):
-            return (r, c)
+        c += self.drc[k][1]
+        flag=False
+        if (r >= 0 and c >= 0 and r < self.boardSize and c < self.boardSize):
+            flag=True
+            return (r, c, flag)
+
+    def ant(self, r, c , start, reset , tourCh):
+        print("entered ant() function")
+        self.tabu = [square]
+        self.moves = [rckt]
+        self.unexp = [rckt]
+        self.tabu[0].r = r
+        self.tabu[0].c = c
+
+        while True:
+            # cycle initialization
+
+
+            r = self.tabu[0].r
+            c = self.tabu[0].c
+
+            # wait for start signal
+            start.wait()
+            reset.done()
+
+            while True:
+                # choose next move
+                for k in range(0, 8):
+                    dr, dc, ok = self.dest(r, c, k)
+                    if not ok:
+                        continue
+
+                    for t in self.tabu:
+                        if t.r == dr and t.c == dc:
+                            break
+
+
+                    tk = self.tNet[(r*self.boardSize+c)*8+k]
+                    self.tSum += tk
+                    # note:  dest r, c stored here
+                    self.unexp.append(rckt[dr, dc, k, tk])
+
+                if len(self.unexp) == 0:
+                    break # no moves
+
+                rn = random.random() * self.tSum
+
+                for move in self.unexp:
+                    if rn <= move.t:
+                        break
+                    rn -= move.t
+
+                # move to new square
+                move.r, r = r, move.r
+                move.c, c = c, move.c
+                self.tabu.append(square[r, c])
+                self.moves.append( move)
+
+
+            # compute pheromone amount to leave
+            for i in self.moves:
+                moves[i].t = (len(self.moves)-i) / (self.completeTour-i)
+
+            # return tour found for this cycle
+            tourCh <- self.moves
 
 
 # struct represents a pheromone amount associated with a move
@@ -78,69 +140,11 @@ class square(NamedTuple):
     c: int
 
 
-def ant(self, r, c , start, reset , tourCh):
 
-    self.tabu = [square]
-    self.moves = [rckt]
-    self.unexp = [rckt]
-    self.tabu[0].r = r
-    self.tabu[0].c = c
-
-    while True:
-        # cycle initialization
-
-
-        r = self.tabu[0].r
-        c = self.tabu[0].c
-
-        # wait for start signal
-        start.wait()
-        reset.done()
-
-        while True:
-            # choose next move
-            for k in range(0, 8):
-                dr, dc, ok = self.dest(r, c, k)
-                if not ok:
-                    continue
-
-                for t in self.tabu:
-                    if t.r == dr and t.c == dc:
-                        break
-
-
-                tk = self.tNet[(r*self.boardSize+c)*8+k]
-                self.tSum += tk
-                # note:  dest r, c stored here
-                self.unexp.append(rckt[dr, dc, k, tk])
-
-            if len(self.unexp) == 0:
-                break # no moves
-
-            rn = random.random() * self.tSum
-
-            for move in self.unexp:
-                if rn <= move.t:
-                    break
-                rn -= move.t
-
-            # move to new square
-            move.r, r = r, move.r
-            move.c, c = c, move.c
-            self.tabu.append(square[r, c])
-            self.moves.append( move)
-
-
-        # compute pheromone amount to leave
-        for i in self.moves:
-            moves[i].t = (len(self.moves)-i) / (self.completeTour-i)
-
-        # return tour found for this cycle
-        tourCh <- self.moves
 
 
 def main():
-    pObj = Problem
+    pObj = Problem()
     wObj = WaitGroup()
 
     print("Starting square:  row", pObj.rstart, "column", pObj.cstart)
@@ -149,9 +153,11 @@ def main():
         for c in range(0, pObj.boardSize):
             for k in range(0, 8):
                 if pObj.dest(r, c, k):
-                    tNet[(r*pObj.boardSize+c)*8+k] = math.e-6
+                    # import pdb; pdb.set_trace()
+                    if k is True:
+                        pObj.tNet[(r*pObj.boardSize+c)*8+k] = pow(10,-6)
 
-
+    print("initialized the board!")
 
     # waitGroups for ant release clockwork
     start = WaitGroup
@@ -165,14 +171,15 @@ def main():
     t=0
     # channel for ants to return tours with pheremone updates
     tch= [rckt(r,c,k,t)]
-
+    print("creating an ant for each square...")
 
     # create an ant for each square
     for r in range(0, pObj.boardSize):
         for c in range(0, pObj.boardSize):
-            ant(r, c, start, reset.wait(), tch)
+            print("entered loop...")
+            pObj.ant(pObj, r, c, start, reset.wait(reset), tch)
 
-
+    print("created an ant for each square")
 
     # accumulator for new pheromone amounts
     tNew = [pObj.nSquares*8]
@@ -220,6 +227,7 @@ def main():
 
         # update pheromone amounts on network, reset accumulator
         for i in range(0,len(tNew)):
+
             pObj.tNet[i] += tNew[i]
             tNew[i] = 0
 
